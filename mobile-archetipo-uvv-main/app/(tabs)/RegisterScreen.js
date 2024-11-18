@@ -1,46 +1,51 @@
-// RegisterScreen.js
 import React, { useState } from 'react';
-import { View, TextInput, Button, Alert } from 'react-native';
-import { supabase } from './index'; // A importação do supabase está correta
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { supabase } from './index';
 
-const RegisterScreen = ({ navigation }) => {
+export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleRegister = async () => {
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
+    const { error } = await supabase.auth.signUp({ email, password });
 
-      if (error) {
-        Alert.alert('Error', error.message);
+    if (error) {
+      alert('Erro ao registrar: ' + error.message);
+    } else if(password.length > 15){
+      alert('Erro ao registrar: Senha deve ter entre 6 e 15 caracteres.')
       } else {
-        Alert.alert('Success', 'Registration successful!');
-        navigation.navigate('Login'); // Navegar de volta para o login após registro
-      }
-    } catch (error) {
-      console.error('Register error:', error);
+      alert('Registro bem-sucedido! Faça login.');
+      navigation.navigate('Login');
     }
   };
 
   return (
-    <View>
+    <View style={styles.container}>
+      <Text style={styles.title}>Registrar</Text>
       <TextInput
+        style={styles.input}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
       />
       <TextInput
-        placeholder="Password"
+        style={styles.input}
+        placeholder="Senha"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Register" onPress={handleRegister} />
+      <Button title="Registrar" onPress={handleRegister} />
+      <Button
+        title="Voltar para Login"
+        onPress={() => navigation.navigate('Login')}
+      />
     </View>
   );
-};
+}
 
-export default RegisterScreen;
+const styles = StyleSheet.create({
+  container: { flex: 1, justifyContent: 'center', padding: 20 },
+  title: { fontSize: 24, marginBottom: 20, textAlign: 'center' },
+  input: { borderWidth: 1, borderColor: '#ccc', padding: 10, marginBottom: 20 },
+});

@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { supabase } from './index'; // Importando o Supabase configurado no App.js
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { supabase } from './index';
 
-function LoginScreen({ navigation }) {
+export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
     if (error) {
-      Alert.alert('Erro', error.message);
+      alert('Erro ao fazer login: ' + error.message);
     } else {
-      Alert.alert('Sucesso', 'Login realizado com sucesso!');
+      alert('Login bem-sucedido!');
     }
   };
 
@@ -21,49 +24,28 @@ function LoginScreen({ navigation }) {
       <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
-        placeholder="Digite seu e-mail"
+        placeholder="Email"
         value={email}
         onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
       />
       <TextInput
         style={styles.input}
-        placeholder="Digite sua senha"
+        placeholder="Senha"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Entrar</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-        <Text style={styles.register}>Não tem uma conta? Cadastre-se</Text>
-      </TouchableOpacity>
+      <Button title="Entrar" onPress={handleLogin} />
+      <Button
+        title="Criar conta"
+        onPress={() => navigation.navigate('Register')}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, justifyContent: 'center', backgroundColor: '#f0f8ff' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
-  input: {
-    height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 20,
-    backgroundColor: '#fff',
-  },
-  button: {
-    backgroundColor: '#007BFF',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  register: { color: '#007BFF', marginTop: 10, textAlign: 'center' },
+  container: { flex: 1, justifyContent: 'center', padding: 20 },
+  title: { fontSize: 24, marginBottom: 20, textAlign: 'center' },
+  input: { borderWidth: 1, borderColor: '#ccc', padding: 10, marginBottom: 20 },
 });
-
-export default LoginScreen;
